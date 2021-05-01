@@ -41,7 +41,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     // A placeholder username validation check
     private fun isUserNameValid(username: String): Boolean {
         return if (!username.isEmpty()) {
-            username.split(" ").size == 2
+            username.trim().split(" ").size == 2
         } else {
             username.isNotBlank()
         }
