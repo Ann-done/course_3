@@ -27,9 +27,8 @@ namespace ServerET.Controllers
 
         [HttpPost]
         [Route("api/values/login")]
-        public Dictionary<string, string> LogIn([FromBody]string json) // по номеру карты 
+        public Dictionary<string, dynamic> LogIn([FromBody]string json) // по номеру карты 
         {
-
             var myJsonObj = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
             var id = myJsonObj["id"];
             var lastname = myJsonObj["lastname"];
@@ -37,52 +36,89 @@ namespace ServerET.Controllers
             Student student = db.Students.Find(id);
             if (student == null || !student.LastName.Equals(lastname))
             {
-                return new Dictionary<string, string> { { "message", "no such student" } };
+                return new Dictionary<string, dynamic> { { "message", "no such student" } };
             }
             if (student.IsLogIn == 1)
             {
-                return new Dictionary<string, string> { { "message", "you are already logged in" } };
+                return new Dictionary<string, dynamic> { { "message", "you are already logged in" } };
             }
             student.IsLogIn = 1;
             db.SaveChanges();
 
             var groupId = student.GroupId;
-            var table = from t in db.Timetables
-                        where t.GroupId == groupId && t.LectureNum == 3 && t.DayOfWeek == 3
-                        select t.Subject;
-
-            var result = new Dictionary<string, string> {
+            Subject subject =  this.GetSubject(groupId);
+          
+            var result = new Dictionary<string, dynamic> {
                 {"id", student.Id.ToString() },
                 {"LastName", student.LastName },
                 {"FirstName", student.FirstName },
                 {"GroupId", student.GroupId.ToString() }
             };
 
-            if (table.FirstOrDefault() == null)
+            if (subject == null)
             {
                 result["SubjectId"] = null;
+                return result;
             }
             else
             {
-                Subject subj = table.FirstOrDefault();
-                result["SubjectId"] = subj.Id.ToString();
-                result["SubjectShortName"] = subj.ShortName;
+                result["SubjectId"] = subject.Id.ToString();
+                result["SubjectShortName"] = subject.ShortName;
+                result["SubjectFullName"] = subject.FullName;
+
+                var topics = this.GetTopics(subject.Id);
+                for ( int i=0; i < topics.Count(); i++)
+                {
+                    result[$"Topic{i + 1}"] = topics.ElementAt(i).TopicName; 
+                }
             }
             return result;
         }
 
         // если авторизован (вынести часть кода в метод) 
 
+        [HttpPost]
         [Route("api/values/getsubject/{idGroup}")]
-        public Subject GetSubject(int idGroup)
+        public Subject GetSubject(int idGroup) //int idGroup
         {
-            int[] time;
+            
+            Dictionary<string, int> day_lectNum = this.CheckTime();
+            if ((day_lectNum == null) || (day_lectNum["LectureNum"] == 0))
+            {
+                return null;
+            }
+            var lectNum = day_lectNum["LectureNum"];
+            var day = day_lectNum["DayOfWeek"];
+
             var table = from t in db.Timetables
-                        where t.GroupId == idGroup && t.LectureNum == 2 && t.DayOfWeek == 2
+                        where t.GroupId == idGroup && t.LectureNum == lectNum && t.DayOfWeek == day
                         select t.Subject;
             Subject subj = table.FirstOrDefault();
             return subj;
         }
+        
+
+        //[HttpPost]
+        //[Route("api/values/getsubject")]
+        //public Subject GetSubject([FromBody]string json) //int idGroup
+        //{
+        //    var myJsonObj = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
+        //    int idGroup = (int)myJsonObj["id"];
+
+        //    Dictionary<string, int> day_lectNum = this.CheckTime();
+        //    if ((day_lectNum == null) || (day_lectNum["LectureNum"] == 0))
+        //    {
+        //        return null;
+        //    }
+        //    var lectNum = day_lectNum["LectureNum"];
+        //    var day = day_lectNum["DayOfWeek"];
+
+        //    var table = from t in db.Timetables
+        //                where t.GroupId == idGroup && t.LectureNum == lectNum && t.DayOfWeek == day
+        //                select t.Subject;
+        //    Subject subj = table.FirstOrDefault();
+        //    return subj;
+        //}
 
         [Route("api/values/getTopics/{idSubj}")]
         public IEnumerable<Topic> GetTopics(int idSubj)
@@ -168,11 +204,12 @@ namespace ServerET.Controllers
         {
             // вернуть LectureNum & DayOfWeek
             Dictionary<string, int> res = new Dictionary<string, int>();
-            DateTime date = new DateTime();
+
+            DateTime date = DateTime.Now;
             var day = date.DayOfWeek;
             if ((int)day == 0)
             {
-                return null;
+                return null; // пар нет - выходной день 
             }
             res["DayOfWeek"] = (int)day;
 
@@ -181,18 +218,19 @@ namespace ServerET.Controllers
 
             if (hourNow < 8 || (hourNow > 15 && minNow > 24))
             {
-                return null;
+                return null;  // пар нет - не начались \закончились сегодня 
             }
             int lectNum = 0;
             foreach (var lecture in Lecture.list)
             {
-                if ((lecture.hSt <= hourNow && lecture.mSt <= minNow) && (hourNow <= lecture.hEnd && minNow < lecture.mEnd))
+                if (((lecture.hSt < hourNow) ||(lecture.hSt == hourNow && lecture.mSt <= minNow)) && ((hourNow == lecture.hEnd && minNow < lecture.mEnd)||(hourNow < lecture.hEnd)))
                 {
                     lectNum = lecture.number;
                     break;
                 }
             }
             res["LectureNum"] = lectNum;
+            // если res = 0 значит доступного предмета нет 
 
             return res;
         }
