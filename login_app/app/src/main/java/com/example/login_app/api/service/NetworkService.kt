@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 public class NetworkService {
 
-    private val BASE_URL = "https://10.0.2.2:44356"
+    private val BASE_URL = "http://10.0.2.2:44372"
     private var mRetrofit: Retrofit? = null
     init {
         mRetrofit = Retrofit.Builder()
