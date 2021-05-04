@@ -74,12 +74,16 @@ namespace ServerET.Controllers
 
         [HttpPost]
         [Route("api/values/getsubject")]
-        public Dictionary<string,string> GetSubject([FromBody] string json) //через тело 
+        public Dictionary<string, string> GetSubject([FromBody] string json) //через тело 
         {
+            if (json == null)
+            {
+                return new Dictionary<string, string> { { "message", "null body" } };
+            }
             var myJsonObj = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
             var idGroup = myJsonObj["id"];
 
-            Subject subject = this.FindSubject(idGroup);
+            Subject subject = this.FindSubject((int)idGroup);
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             if (subject == null)
@@ -102,7 +106,7 @@ namespace ServerET.Controllers
 
             return result;
         }
-        
+
         private Subject FindSubject(int idGroup)
         {
             Dictionary<string, int> day_lectNum = this.CheckTime();
@@ -146,7 +150,7 @@ namespace ServerET.Controllers
         {
             var myJsonObj = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
             int idQu = myJsonObj["id"];
-            
+
             var table = from t in db.Answers
                         where t.QuestionId == idQu
                         select t;
