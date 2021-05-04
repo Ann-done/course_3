@@ -41,5 +41,42 @@ fun rawJSON(){
 }
 
 
+fun reqlogIn(id:String, lastname:String, firstname:String){
+
+    val student:Student = Student()
+    student.setId(id)
+    student.setLastName(lastname)
+    student.setName(firstname)
+
+    NetworkService!!.getInstance()!!.getJSONApi()!!.postLogIn(student)!!
+        .enqueue( object:  Callback<Student?> {
+
+            override fun onResponse(call: Call<Student?>, response: Response<Student?>) {
+
+                //проверить message
+                // проверить subjectId
+                val student: Student? = response.body()
+                if (student?.getMessage() == null) {
+                        Log.d("Pretty Printed JSON :", student!!.getName().toString())
+                        Log.d("Pretty Printed JSON :", student!!.getId().toString())
+                        Log.d("Pretty Printed JSON :", student!!.getSubjectId().toString())
+                        Log.d("Pretty Printed JSON :", student!!.getSubjShName().toString())
+
+                }else{
+                    Log.d("Pretty Printed JSON :", student!!.getMessage().toString())
+                }
+            }
+
+            override fun onFailure(call: Call<Student?>, t: Throwable) {
+                Log.e("RETROFIT_ERROR", "error")
+                t.printStackTrace()
+            }
+
+
+        })
+
+}
+
+
 
 

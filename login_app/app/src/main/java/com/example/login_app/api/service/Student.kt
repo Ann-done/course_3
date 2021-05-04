@@ -21,13 +21,26 @@ class Student {
     @Expose
     private var otch: String? = null
 
-    @SerializedName("IsLogIn")
-    @Expose
-    private var isLogIn  = 0
-
     @SerializedName("GroupId")
     @Expose
     private var groupId  = 0
+
+    @SerializedName("SubjectId")
+    @Expose
+    private var subjectId = 0
+
+    @SerializedName("SubjShortName")
+    @Expose
+    private var subjShName: String? = null
+
+    @SerializedName("SubjFullName")
+    @Expose
+    private var subjFullName: String? = null
+
+    @SerializedName("message")
+    @Expose
+    private var message: String? = null
+
 
     fun getId(): String? {
         return id
@@ -61,18 +74,43 @@ class Student {
         this.otch = otch
     }
 
-    fun getIsLogIn(): Int {
-        return isLogIn
-    }
-
-    fun getGrouId(): Int {
+    fun getGroupId(): Int {
         return groupId
     }
 
     fun setGroupId(groupId: Int) {
         this.groupId = groupId
     }
+    fun getSubjectId(): Int {
+        return subjectId
+    }
 
+    fun setSubjectId(subjectId: Int) {
+        this.subjectId = subjectId
+    }
+    fun getSubjShName(): String? {
+        return subjShName
+    }
+
+    fun setSubjectShName(subjShName: String) {
+        this.subjShName = subjShName
+    }
+
+    fun getSubjFullName(): String? {
+        return subjFullName
+    }
+
+    fun setSubjectFullName(subjFullName: String) {
+        this.subjFullName = subjFullName
+    }
+
+    fun getMessage(): String? {
+        return message
+    }
+
+    fun setMessage(message: String) {
+        this.message = message
+    }
 }
 
 

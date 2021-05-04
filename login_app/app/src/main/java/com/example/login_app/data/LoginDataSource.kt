@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.login_app.BuildConfig
 import com.example.login_app.api.service.rawJSON
+import com.example.login_app.api.service.reqlogIn
 import com.example.login_app.data.model.LoggedInUser
 import java.io.IOException
 import java.security.spec.KeySpec
@@ -24,7 +25,7 @@ class LoginDataSource {
             val name = username.substringAfter(" ");
             //val cardHash = makeHash(password);
 
-            rawJSON()
+            reqlogIn("1234567a3", lastname, name)
             // формируем запрос
             // TODO: здесь хэшируем пароль  и делаем запрос
              val fakeUser = LoggedInUser(java.util.UUID.randomUUID().toString(), "$lastname $name")
