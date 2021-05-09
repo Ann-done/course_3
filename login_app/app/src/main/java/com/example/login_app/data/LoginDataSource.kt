@@ -2,6 +2,7 @@ package com.example.login_app.data
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.login_app.BuildConfig
 import com.example.login_app.data.model.LoggedInUser
 import java.io.IOException
 import java.security.spec.KeySpec
@@ -21,6 +22,7 @@ class LoginDataSource {
             val lastname =  username.substringBefore(" ");
             val name = username.substringAfter(" ");
             val cardHash = makeHash(password);
+
 
             // формируем запрос
             // TODO: здесь хэшируем пароль  и делаем запрос
