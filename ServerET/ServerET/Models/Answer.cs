@@ -5,6 +5,7 @@ using System.Web;
 
 namespace ServerET.Models
 {
+    [Serializable()]
     public class Answer
     {
         public int Id { get; set; }
