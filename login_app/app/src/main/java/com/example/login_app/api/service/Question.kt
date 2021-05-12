@@ -3,15 +3,14 @@ package com.example.login_app.api.service
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Topic {
-
+class Question {
     @SerializedName("Id")
     @Expose
     private var id = 0
 
-    @SerializedName("TopicName")
+    @SerializedName("QuName")
     @Expose
-    private var topicName : String? = null
+    private var quName : String? = null
 
     fun getId(): Int {
         return id
@@ -21,11 +20,11 @@ class Topic {
         this.id = Id
     }
 
-    fun getName(): String? {
-        return topicName
+    fun getQuName(): String? {
+        return quName
     }
 
-    fun setName(name: String) {
-        this.topicName = name
+    fun setQuName(quName: String) {
+        this.quName = quName
     }
 }
