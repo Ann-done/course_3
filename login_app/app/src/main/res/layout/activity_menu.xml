@@ -49,17 +49,17 @@
             app:tabMode="fixed"
             app:tabTextColor="@color/white">
 
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tab_Test"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/test_page" />
+<!--            <com.google.android.material.tabs.TabItem-->
+<!--                android:id="@+id/tab_Test"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/test_page" />-->
 
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tab_Res"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/results_page" />
+<!--            <com.google.android.material.tabs.TabItem-->
+<!--                android:id="@+id/tab_Res"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/results_page" />-->
         </com.google.android.material.tabs.TabLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
