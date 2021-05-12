@@ -173,6 +173,7 @@
     <Compile Include="Models\Result.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\Subject.cs" />
+    <Compile Include="Models\Task.cs" />
     <Compile Include="Models\TestContext.cs" />
     <Compile Include="Models\Timetable.cs" />
     <Compile Include="Models\Topic.cs" />

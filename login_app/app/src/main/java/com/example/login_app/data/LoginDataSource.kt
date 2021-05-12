@@ -24,9 +24,8 @@ class LoginDataSource {
             val name = username.substringAfter(" ");
             //val cardHash = makeHash(password);
 
-            reqlogIn("1234567a3", lastname, name)
 
-
+            // reqlogIn("1234567a3", lastname, name)
             // формируем запрос
             // TODO: здесь хэшируем пароль  и делаем запрос
              val fakeUser = LoggedInUser(java.util.UUID.randomUUID().toString(), "$lastname $name")

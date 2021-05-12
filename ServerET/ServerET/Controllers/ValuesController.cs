@@ -7,7 +7,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Data.Entity;
-
+using System.Web;
+using Microsoft.Ajax.Utilities;
+using System.Data.Entity.Core.Metadata.Edm;
+using System.Web.UI.WebControls;
 
 namespace ServerET.Controllers
 {
@@ -28,12 +31,14 @@ namespace ServerET.Controllers
         [Route("api/values/login")]
         public Dictionary<string, string> LogIn([FromBody]string json) // по номеру карты 
         {
+           
             var myJsonObj = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
-            var id = myJsonObj["id"];
-            var lastname = myJsonObj["lastname"];
+            var id = myJsonObj["Id"];
+            var lastname = myJsonObj["LastName"];
+            var name = myJsonObj["FirstName"];
 
             Student student = db.Students.Find(id);
-            if (student == null || !student.LastName.Equals(lastname))
+            if (student == null || (!student.LastName.Equals(lastname) && !student.LastName.Equals(name)))
             {
                 return new Dictionary<string, string> { { "message", "no such student" } };
             }
@@ -45,7 +50,7 @@ namespace ServerET.Controllers
             db.SaveChanges();
 
             var result = new Dictionary<string, string> {
-                {"id", student.Id.ToString() },
+                {"Id", student.Id.ToString() },
                 {"LastName", student.LastName },
                 {"FirstName", student.FirstName },
                 {"GroupId", student.GroupId.ToString() }
@@ -59,14 +64,14 @@ namespace ServerET.Controllers
             }
 
             result["SubjectId"] = subject.Id.ToString();
-            result["SubjectShortName"] = subject.ShortName;
-            result["SubjectFullName"] = subject.FullName;
-            var i = 1;
-            foreach (var item in this.GetTopics(subject.Id))
-            {
-                result[$"Topic{i}"] = item.TopicName;
-                i++;
-            }
+            result["SubjShortName"] = subject.ShortName;
+            result["SubjFullName"] = subject.FullName;
+            //var i = 1;
+            //foreach (var item in this.GetTopics(subject.Id))
+            //{
+            //    result[$"Topic{i}"] = item.TopicName;
+            //    i++;
+            //}
 
             return result;
         }
@@ -81,7 +86,7 @@ namespace ServerET.Controllers
                 return new Dictionary<string, string> { { "message", "null body" } };
             }
             var myJsonObj = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
-            var idGroup = myJsonObj["id"];
+            var idGroup = myJsonObj["Id"];
 
             Subject subject = this.FindSubject((int)idGroup);
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -93,15 +98,16 @@ namespace ServerET.Controllers
             }
             else
             {
-                result["SubjectId"] = subject.Id.ToString();
-                result["SubjectShortName"] = subject.ShortName;
-                result["SubjectFullName"] = subject.FullName;
-
-                var topics = this.GetTopics(subject.Id);
-                foreach (var topic in topics)
-                {
-                    result[$"{topic.Id}"] = topic.TopicName;
-                }
+                result["Id"] = subject.Id.ToString();
+                result["ShortName"] = subject.ShortName;
+                result["FullName"] = subject.FullName;
+                
+                
+                //var topics = this.GetTopics(subject.Id);
+                //foreach (var topic in topics)
+                //{
+                //    result[$"Topic_{topic.Id}"] = topic.TopicName;
+                //}
             }
 
             return result;
@@ -124,7 +130,9 @@ namespace ServerET.Controllers
             return subject;
         }
 
-        private IEnumerable<Topic> GetTopics(int idSubj)
+       
+        [Route("api/values/gettopics/{idSubj}")]
+        public IEnumerable<Topic> GetTopics(int idSubj)
         {
             var table = from t in db.Topics
                         where t.SubjectId == idSubj
@@ -134,28 +142,60 @@ namespace ServerET.Controllers
 
         [HttpPost]
         [Route("api/values/getQus")]
-        public IEnumerable<Question> GetQus([FromBody] string json)
+        public List<Task> GetQus([FromBody] string json)
         {
             var myJsonObj = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
-            int idTopic = myJsonObj["id"];
+            int idTopic = (int)myJsonObj["Id"];
             var table = from t in db.Questions
                         where t.TopicId == idTopic
                         select t;
-            return table;
+
+            List<Task> result = new List<Task>(); 
+           
+            foreach (var item in table)
+            {
+
+                var answers = this.GetAnswers(item.Id);
+                var ids = new List<int>();
+                var answer_list = new Dictionary<int, string>();
+                foreach(var answer in answers)
+                {
+                    if (answer.IsRight == 1)
+                    {
+                        ids.Add(answer.Id);
+                    }
+                    answer_list[answer.Id] = answer.Text;
+                }
+                result.Add(new Task {question=item.QuName, right_ids=ids, answers=answer_list});
+
+            }
+
+            return result;
         }
 
-        [HttpPost]
-        [Route("api/values/getAnswers")]
-        public IEnumerable<Answer> GetAnswers([FromBody]string json)
+        
+        private  List<Answer> GetAnswers(int idQu)
         {
-            var myJsonObj = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
-            int idQu = myJsonObj["id"];
-
+          
             var table = from t in db.Answers
                         where t.QuestionId == idQu
                         select t;
-            return table;
+            var res =  table.ToList();
+            return res;
         }
+
+        //[HttpPost]
+        //[Route("api/values/getAnswers")]
+        //public IEnumerable<Answer> GetAnswers([FromBody]string json)
+        //{
+        //    var myJsonObj = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
+        //    int idQu = myJsonObj["id"];
+
+        //    var table = from t in db.Answers
+        //                where t.QuestionId == idQu
+        //                select t;
+        //    return table;
+        //}
 
         [HttpPost] // запись результата 
         public void CreateResult([FromBody]Result result)

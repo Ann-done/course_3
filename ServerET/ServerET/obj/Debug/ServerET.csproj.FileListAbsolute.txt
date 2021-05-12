@@ -92,8 +92,8 @@ D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\bin\ru\System.We
 D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\bin\ru\System.Web.WebPages.resources.dll
 D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\bin\ru\System.Web.WebPages.Deployment.resources.dll
 D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\bin\ru\System.Web.WebPages.Razor.resources.dll
-D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\obj\Debug\ServerET.csprojAssemblyReference.cache
 D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\obj\Debug\ServerET.csproj.CoreCompileInputs.cache
 D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\obj\Debug\ServerET.csproj.CopyComplete
 D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\obj\Debug\ServerET.dll
 D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\obj\Debug\ServerET.pdb
+D:\ANNA\УНИВЕР\КУРС_3.2\КП\server\ServerET\ServerET\obj\Debug\ServerET.csprojAssemblyReference.cache

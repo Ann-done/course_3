@@ -1,19 +1,22 @@
 package com.example.login_app.ui.login
 
 import android.app.Activity
-import android.net.Uri
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.login_app.R
-import java.net.URI
+import com.example.login_app.ui.menu.MenuActivity
 
 
 class LoginActivity : AppCompatActivity() {
@@ -59,7 +62,13 @@ class LoginActivity : AppCompatActivity() {
                 showLoginFailed(loginResult.error)
             }
             if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
+                val intent = Intent(this, MenuActivity::class.java).apply {
+                    putExtra("username", username.text.toString())
+                    putExtra("password", password.text.toString())
+                    putExtra("displayname", loginResult.success.displayName)
+
+                }
+                startActivity(intent)
             }
             setResult(Activity.RESULT_OK)
 
@@ -98,17 +107,7 @@ class LoginActivity : AppCompatActivity() {
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
-    }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
-        // TODO : initiate successful logged in experience
-        Toast.makeText(
-                applicationContext,
-                "$welcome $displayName",
-                Toast.LENGTH_LONG
-        ).show()
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
