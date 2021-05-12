@@ -1,4 +1,4 @@
-package com.example.login_app.ui.login
+package com.example.login_app.ui.menu
 
 import android.content.Context;
 import androidx.fragment.app.Fragment
