@@ -32,12 +32,14 @@ fun rawJSON(){
 }
 
 
-fun reqlogIn(id: String, lastname: String, firstname: String){ //настроить возврат
+fun reqlogIn(id: ByteArray, lastname: String, firstname: String) : Student { //настроить возврат
 
     val req:JSONObject = JSONObject()
     req.put("Id",id)
     req.put("LastName",lastname)
     req.put("FirstName", firstname)
+
+    var resSt: Student = Student()
 
     NetworkService.getInstance()!!.getJSONApi()!!.postLogIn(req.toString())!!
         .enqueue(object : Callback<Student?> {
@@ -46,23 +48,19 @@ fun reqlogIn(id: String, lastname: String, firstname: String){ //настрои�
 
                 //проверить message
                 // проверить subjectId
-                val student: Student? = response.body()
-                if (student?.getMessage() == null) {
-                    Log.d("Pretty Printed JSON :", student!!.getName().toString())
-                    Log.d("Pretty Printed JSON :", student.getId().toString())
-                    Log.d("Pretty Printed JSON :", student.getSubjectId().toString())
-                    Log.d("Pretty Printed JSON :", student.getSubjShName().toString())
-
-                } else {
-                    Log.d("Pretty Printed JSON :", student.getMessage().toString())
-                }
+                val student = response.body()
+                Log.d("Pretty Printed JSON :", "Student from response : " + student!!.getMessage())
+                resSt = student
             }
 
             override fun onFailure(call: Call<Student?>, t: Throwable) {
                 Log.e("RETROFIT_ERROR", "error")
+                resSt?.setMessage("Не удалось отправить запрос на сервер")
                 t.printStackTrace()
             }
         })
+
+    return resSt
 }
 
 fun reqGetSubject(groupId: Int){

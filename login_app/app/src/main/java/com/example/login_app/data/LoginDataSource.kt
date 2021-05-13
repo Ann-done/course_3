@@ -1,11 +1,16 @@
 package com.example.login_app.data
 
 import android.os.Build
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.login_app.BuildConfig
 import com.example.login_app.api.service.*
 import com.example.login_app.data.model.LoggedInUser
 import java.io.IOException
+import java.lang.Exception
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import java.security.spec.KeySpec
 import java.util.*
 import javax.crypto.SecretKeyFactory
@@ -22,16 +27,26 @@ class LoginDataSource {
 
             val lastname =  username.substringBefore(" ");
             val name = username.substringAfter(" ");
-            //val cardHash = makeHash(password);
+            val cardHash = makeHash(password);
 
+            //TODO поменять метод хэширования
+            Log.d("Pretty Printed JSON :", cardHash.toString())
 
-            // reqlogIn("1234567a3", lastname, name)
-            // формируем запрос
-            // TODO: здесь хэшируем пароль  и делаем запрос
-             val fakeUser = LoggedInUser(java.util.UUID.randomUUID().toString(), "$lastname $name")
+            //TODO установить ожидание выполнения запроса
+            val student = reqlogIn(cardHash, lastname, name)
+            if (student?.getMessage() == null) {
+                Log.d("Pretty Printed JSON :", student!!.getGroupId().toString())
+            } else {
+
+                //TODO проверить вылетает ли ошибка
+                Log.d("Pretty Printed JSON :", student.getMessage().toString())
+                throw Throwable(student.getMessage())
+            }
+          //TODO в новую активити id студента передастся в виде byteArrray.toString()
+             val fakeUser = LoggedInUser(cardHash.toString(), "$lastname $name", student.getGroupId())
             return Result.Success(fakeUser)
         } catch (e: Throwable) {
-            return Result.Error(IOException("Error logging in", e))
+            return Result.Error(Exception(e.message,e))
         }
     }
 
@@ -41,13 +56,9 @@ class LoginDataSource {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun makeHash(password: String) : String{
 
-    val salt: ByteArray = "CRYPTO".toByteArray();
-    val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt, 65536, 128)
-    val f: SecretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
-    val hash: ByteArray = f.generateSecret(spec).getEncoded()
-    val enc: Base64.Encoder = Base64.getEncoder()
-    return enc.encodeToString(hash);
+@RequiresApi(Build.VERSION_CODES.KITKAT)
+fun makeHash(password: String) : ByteArray {
+    var md = MessageDigest.getInstance("SHA-512")
+    return md.digest(password.toByteArray(StandardCharsets.UTF_8));
 }
