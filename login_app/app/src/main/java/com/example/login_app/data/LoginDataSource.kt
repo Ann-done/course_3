@@ -1,12 +1,17 @@
 package com.example.login_app.data
 
 import android.os.Build
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.login_app.BuildConfig
 import com.example.login_app.api.service.*
 import com.example.login_app.data.model.LoggedInUser
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
+import java.lang.Exception
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import java.security.spec.KeySpec
 import java.util.*
 import javax.crypto.SecretKeyFactory
@@ -36,13 +41,9 @@ class LoginDataSource {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun makeHash(password: String) : String{
 
-    val salt: ByteArray = "CRYPTO".toByteArray();
-    val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt, 65536, 128)
-    val f: SecretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
-    val hash: ByteArray = f.generateSecret(spec).getEncoded()
-    val enc: Base64.Encoder = Base64.getEncoder()
-    return enc.encodeToString(hash);
+@RequiresApi(Build.VERSION_CODES.KITKAT)
+fun makeHash(password: String) : ByteArray {
+    var md = MessageDigest.getInstance("SHA-512")
+    return md.digest(password.toByteArray(StandardCharsets.UTF_8));
 }

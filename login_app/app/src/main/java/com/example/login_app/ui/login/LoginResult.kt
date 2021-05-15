@@ -11,4 +11,5 @@ data class LoginResult(
 data class SubjectResult(
         val success: ReturnedSubject? = null,
         val error:String? = null
+
 )

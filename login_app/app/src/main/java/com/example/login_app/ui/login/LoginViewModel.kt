@@ -59,6 +59,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
                 }
             }
+
         }
     }
 
@@ -83,7 +84,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
     // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {
-        return password.length > 6
+        return password.length == 7
     }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)

@@ -33,6 +33,7 @@ fun rawJSON(){
 }
 
 
+
 fun reqlogIn(id: String, lastname: String, firstname: String, callback:(Student?) -> Unit){//настроить возврат
 
     val req:JSONObject = JSONObject()
@@ -40,6 +41,7 @@ fun reqlogIn(id: String, lastname: String, firstname: String, callback:(Student?
     req.put("LastName",lastname)
     req.put("FirstName", firstname)
     var student = Student()
+
 
     NetworkService.getInstance()!!.getJSONApi()!!.postLogIn(req.toString())!!.enqueue(object : Callback<Student?> {
 
@@ -58,6 +60,7 @@ fun reqlogIn(id: String, lastname: String, firstname: String, callback:(Student?
         }
     })
     }
+
 
 fun reqGetSubject(groupId: Int, callback: (MySubject?) -> Unit){
 

@@ -6,12 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.example.login_app.R
 import com.example.login_app.api.service.MySubject
 import com.example.login_app.ui.login.LoginViewModel
+import com.example.login_app.ui.login.LoginActivity
 import com.google.android.material.tabs.TabLayout
 import javax.security.auth.Subject
 
@@ -26,6 +28,11 @@ class MenuActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
+        setSupportActionBar(findViewById(R.id.my_toolbar))
+
+        updateUiWithUser(username)
+        //TODO проверить Toast
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         username = intent.getStringExtra("username")
         val password = intent.getStringExtra("password")
@@ -75,12 +82,16 @@ class MenuActivity : AppCompatActivity() {
             }
         })
 
+        val image_button = findViewById<ImageView>(R.id.imageButton3)
+        image_button.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View?) {
+                // TODO : add logout request
+                val intent = Intent(view?.context, LoginActivity::class.java)
+                startActivity(intent)
+                finishAffinity()
+            }
+        })
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateUiWithUser(username)
     }
 
     private fun updateUiWithUser(displayname: String?) {

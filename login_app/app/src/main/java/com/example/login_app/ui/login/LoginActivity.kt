@@ -33,7 +33,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
-
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
@@ -124,7 +123,6 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed( errorString: String) {
         Log.d("Pretty Printed JSON :", "Вывод toast о неудачной авторизации" + errorString)
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
-
     }
 }
 
