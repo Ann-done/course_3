@@ -7,6 +7,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.viewpager.widget.ViewPager
 import com.example.login_app.R
+import com.example.login_app.api.service.Result
 import com.google.android.material.tabs.TabLayout
 
 class MenuActivity : AppCompatActivity() {
@@ -14,20 +15,8 @@ class MenuActivity : AppCompatActivity() {
     var viewPager: ViewPager? = null
 
     private var listTests:ArrayList<String>?=null
-    private var listResults:ArrayList<String>?=null
+    private var listResults:ArrayList<Result>?=null
 
-    private fun fillTestFragment(){
-        val spinner = findViewById<Spinner>(R.id.spinner)
-
-        val list = ArrayList<String>(arrayOf("x", "y", "z").asList())
-
-        val spinnerArrayAdapter: ArrayAdapter<String> =
-            ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list)
-
-
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
-        spinner.adapter = spinnerArrayAdapter
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +36,28 @@ class MenuActivity : AppCompatActivity() {
         tabLayout!!.tabGravity = TabLayout.GRAVITY_FILL
 
         // Todo: Здесь запрос на список тестов и сохранение в переменную
+
+
         listTests = ArrayList<String>(arrayOf("x", "y", "z").asList())
 
-        // Todo: А здесь запрос на список результатов
-        listResults = ArrayList<String>(arrayOf("test1", "test2", "test3").asList())
+        // Todo: Строчка ниже нужна, так как это дефолтное значение
+        listTests?.add(0,"Выбери предмет")
 
+
+        // Todo: А здесь запрос на список результатов
+        val res1 = Result()
+        res1.id = 1
+        res1.mark = 123
+        res1.topicId = 11111111
+        res1.rightAnswNum = 999
+
+        val res2 = Result()
+        res2.id = 2
+        res2.mark = 123123
+        res2.topicId = 222222222
+        res2.rightAnswNum = 8888
+
+        listResults = ArrayList<Result>(arrayOf(res1, res2).asList())
         val adapter = PagerAdapter(
             this,
             supportFragmentManager,
@@ -84,10 +90,11 @@ class MenuActivity : AppCompatActivity() {
     }
 
     fun getTestList(): ArrayList<String>? {
+
         return listTests
     }
 
-    fun getResults(): ArrayList<String>?{
+    fun getResults(): ArrayList<Result>?{
         return listResults
     }
 }
