@@ -5,5 +5,9 @@ package com.example.login_app.data.model
  */
 data class LoggedInUser(
         val userId: String,
-        val displayName: String
+
+        val lastName:String,
+        val name: String,
+        val groupId: Int
+
 )

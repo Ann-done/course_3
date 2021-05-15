@@ -15,7 +15,7 @@ interface JSONServerApi {
   fun postLogIn(@Body data: String): Call<Student?>? //вместе с id предмета
 
   @POST("/api/values/getsubject")
-  fun postGetSubject(@Body data: String): Call<Subject?>?
+  fun postGetSubject(@Body data: String): Call<MySubject?>?
 
   @GET("/api/values/gettopics/{idSubj}")
   fun getTopics(@Path("idSubj") idSubj: Int): Call<List<Topic>?>?

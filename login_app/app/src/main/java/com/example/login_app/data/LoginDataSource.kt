@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import com.example.login_app.BuildConfig
 import com.example.login_app.api.service.*
 import com.example.login_app.data.model.LoggedInUser
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.security.spec.KeySpec
 import java.util.*
@@ -17,21 +18,15 @@ import javax.crypto.spec.PBEKeySpec
  */
 class LoginDataSource {
     @RequiresApi(Build.VERSION_CODES.O)
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(lastname:String, name: String, password: String,groupId: Int ): Result<LoggedInUser> {
         try {
 
-            val lastname =  username.substringBefore(" ");
-            val name = username.substringAfter(" ");
-            //val cardHash = makeHash(password);
+            var fakeUser = LoggedInUser(password, lastname, name, groupId)
 
-
-            // reqlogIn("1234567a3", lastname, name)
-            // формируем запрос
-            // TODO: здесь хэшируем пароль  и делаем запрос
-             val fakeUser = LoggedInUser(java.util.UUID.randomUUID().toString(), "$lastname $name")
             return Result.Success(fakeUser)
         } catch (e: Throwable) {
-            return Result.Error(IOException("Error logging in", e))
+            return Result.Error(Exception("Login failed",e))
+
         }
     }
 
