@@ -42,13 +42,15 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu)
         setSupportActionBar(findViewById(R.id.my_toolbar))
 
-        updateUiWithUser(username)
+
         //TODO проверить Toast
 //        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         username = intent.getStringExtra("username")
         val password = intent.getStringExtra("password")
         val groupId = intent.getStringExtra("groupId")
+
+        updateUiWithUser(username)
 
         tabLayout = findViewById<TabLayout>(R.id.tabs)
         viewPager = findViewById<ViewPager>(R.id.viewpager)
@@ -82,18 +84,18 @@ class MenuActivity : AppCompatActivity() {
 
         listResults = ArrayList<Result>(arrayOf(res1, res2).asList())
 
-        testViewModel.subjectResult.observe(this@MenuActivity, Observer {
-            val subjectResult = it ?: return@Observer
-
-            if (subjectResult.error != null) {
-               //TODO нет доступного предмета
-            }
-            if (subjectResult.success != null) {
-               //TODO установить имя предмета и отправить запрос на получение топиков
-            }
-            setResult(RESULT_OK)
-
-        })
+//        testViewModel.subjectResult.observe(this@MenuActivity, Observer {
+//            val subjectResult = it ?: return@Observer
+//
+//            if (subjectResult.error != null) {
+//               //TODO нет доступного предмета
+//            }
+//            if (subjectResult.success != null) {
+//               //TODO установить имя предмета и отправить запрос на получение топиков
+//            }
+//            setResult(RESULT_OK)
+//
+//        })
 
 
         val adapter = PagerAdapter(
@@ -133,6 +135,7 @@ class MenuActivity : AppCompatActivity() {
         })
 
     }
+
 
     private fun updateUiWithUser(displayname: String?) {
         val welcome = getString(R.string.welcome)
