@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import com.example.login_app.BuildConfig
 import com.example.login_app.api.service.*
 import com.example.login_app.data.model.LoggedInUser
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.lang.Exception
 import java.nio.charset.StandardCharsets
@@ -22,31 +23,15 @@ import javax.crypto.spec.PBEKeySpec
  */
 class LoginDataSource {
     @RequiresApi(Build.VERSION_CODES.O)
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(lastname:String, name: String, password: String,groupId: Int ): Result<LoggedInUser> {
         try {
 
-            val lastname =  username.substringBefore(" ");
-            val name = username.substringAfter(" ");
-            val cardHash = makeHash(password);
+            var fakeUser = LoggedInUser(password, lastname, name, groupId)
 
-            //TODO поменять метод хэширования
-            Log.d("Pretty Printed JSON :", cardHash.toString())
-
-            //TODO установить ожидание выполнения запроса
-            val student = reqlogIn(cardHash, lastname, name)
-            if (student?.getMessage() == null) {
-                Log.d("Pretty Printed JSON :", student!!.getGroupId().toString())
-            } else {
-
-                //TODO проверить вылетает ли ошибка
-                Log.d("Pretty Printed JSON :", student.getMessage().toString())
-                throw Throwable(student.getMessage())
-            }
-          //TODO в новую активити id студента передастся в виде byteArrray.toString()
-             val fakeUser = LoggedInUser(cardHash.toString(), "$lastname $name", student.getGroupId())
             return Result.Success(fakeUser)
         } catch (e: Throwable) {
-            return Result.Error(Exception(e.message,e))
+            return Result.Error(Exception("Login failed",e))
+
         }
     }
 

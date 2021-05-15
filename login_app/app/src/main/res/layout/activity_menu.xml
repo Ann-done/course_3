@@ -15,9 +15,17 @@
         >
 
         <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android:background="#730202">
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="?attr/actionBarSize"-->
+<!--            android:background="#730202">-->
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,6 +44,9 @@
                 android:backgroundTint="#00000000"
                 app:srcCompat="@drawable/log_out"
                 tools:ignore="VectorDrawableCompat"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                />
 
         </androidx.appcompat.widget.Toolbar>

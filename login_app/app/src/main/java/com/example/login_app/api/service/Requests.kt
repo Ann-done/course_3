@@ -1,6 +1,7 @@
 package com.example.login_app.api.service
 
 import android.util.Log
+import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,57 +33,53 @@ fun rawJSON(){
 }
 
 
-fun reqlogIn(id: ByteArray, lastname: String, firstname: String) : Student { //настроить возврат
+
+fun reqlogIn(id: String, lastname: String, firstname: String, callback:(Student?) -> Unit){//настроить возврат
 
     val req:JSONObject = JSONObject()
     req.put("Id",id)
     req.put("LastName",lastname)
     req.put("FirstName", firstname)
+    var student = Student()
 
-    var resSt: Student = Student()
 
-    NetworkService.getInstance()!!.getJSONApi()!!.postLogIn(req.toString())!!
-        .enqueue(object : Callback<Student?> {
+    NetworkService.getInstance()!!.getJSONApi()!!.postLogIn(req.toString())!!.enqueue(object : Callback<Student?> {
 
-            override fun onResponse(call: Call<Student?>, response: Response<Student?>) {
+         override fun onResponse(call: Call<Student?>, response: Response<Student?>) {
 
-                //проверить message
-                // проверить subjectId
-                val student = response.body()
-                Log.d("Pretty Printed JSON :", "Student from response : " + student!!.getMessage())
-                resSt = student
-            }
+            val student_temp = response.body()
+            Log.d("Pretty Printed JSON :", "Student from response  : Get student from server ")
+            student = student_temp!! // возвращает либо message либо groupid
+            callback(student)
+        }
 
-            override fun onFailure(call: Call<Student?>, t: Throwable) {
-                Log.e("RETROFIT_ERROR", "error")
-                resSt?.setMessage("Не удалось отправить запрос на сервер")
-                t.printStackTrace()
-            }
-        })
+        override fun onFailure(call: Call<Student?>, t: Throwable) {
+            Log.e("RETROFIT_ERROR", "error")
+            callback(null)
+            t.printStackTrace()
+        }
+    })
+    }
 
-    return resSt
-}
 
-fun reqGetSubject(groupId: Int){
+fun reqGetSubject(groupId: Int, callback: (MySubject?) -> Unit){
 
     val req:JSONObject = JSONObject()
     req.put("Id", groupId)
-    NetworkService.getInstance()!!.getJSONApi()!!.postGetSubject(req.toString())?.enqueue(object : Callback<Subject?> {
+    var subject :MySubject = MySubject()
 
-        override fun onResponse(call: Call<Subject?>, response: Response<Subject?>) {
-            val subject: Subject? = response.body()
-            if (subject?.getMessage() == null) {
-                Log.d("Pretty Printed JSON :", "Subject id :" + subject!!.getId())
-                Log.d("Pretty Printed JSON :","Short name : " + subject.getShName())
-                Log.d("Pretty Printed JSON :", "Full name: "+ subject.getSFullName())
+    NetworkService.getInstance()!!.getJSONApi()!!.postGetSubject(req.toString())?.enqueue(object : Callback<MySubject?> {
 
-            } else {
-                Log.d("Pretty Printed JSON :", subject!!.getMessage().toString())
-            }
+        override fun onResponse(call: Call<MySubject?>, response: Response<MySubject?>) {
+            val mySubject_temp = response.body()
+            Log.d("Pretty Printed JSON :", "Subject from response  : Get subject from server ")
+            subject = mySubject_temp!! //вернет либо null либо subject
+           callback(subject)
         }
 
-        override fun onFailure(call: Call<Subject?>, t: Throwable) {
+        override fun onFailure(call: Call<MySubject?>, t: Throwable) {
             Log.e("RETROFIT_ERROR", "error")
+            callback(null)
             t.printStackTrace()
         }
     })

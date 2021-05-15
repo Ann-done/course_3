@@ -1,5 +1,7 @@
 package com.example.login_app.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.login_app.data.model.LoggedInUser
 
 /**
@@ -27,9 +29,10 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun login(lastname:String, name: String, password: String, groupId: Int): Result<LoggedInUser> {
         // handle login
-        val result = dataSource.login(username, password)
+        val result = dataSource.login(lastname, name, password, groupId)
 
         if (result is Result.Success) {
             setLoggedInUser(result.data)

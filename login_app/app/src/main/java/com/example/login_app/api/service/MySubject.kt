@@ -3,7 +3,7 @@ package com.example.login_app.api.service
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Subject {
+class MySubject {
     @SerializedName("Id")
     @Expose
     private var id = 0
@@ -15,11 +15,7 @@ class Subject {
     @SerializedName("FullName")
     @Expose
     private var fullName : String? = null
-
-    @SerializedName("message")
-    @Expose
-    private var message: String? = null
-
+    
     fun getId(): Int {
         return id
     }
@@ -36,7 +32,7 @@ class Subject {
         this.shortName = shortName
     }
 
-    fun getSFullName(): String? {
+    fun getFullName(): String? {
         return fullName
     }
 
@@ -44,11 +40,4 @@ class Subject {
         this.fullName = fullName
     }
 
-    fun getMessage(): String? {
-        return message
-    }
-
-    fun setMessage(message: String) {
-        this.message = message
-    }
 }

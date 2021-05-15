@@ -7,3 +7,9 @@ data class LoginResult(
         val success: LoggedInUserView? = null,
         val error: String? = null
 )
+
+data class SubjectResult(
+        val success: ReturnedSubject? = null,
+        val error:String? = null
+
+)
