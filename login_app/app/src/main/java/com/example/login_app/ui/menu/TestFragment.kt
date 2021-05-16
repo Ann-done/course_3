@@ -11,17 +11,23 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.login_app.R
+import com.example.login_app.api.service.MySubject
 import com.example.login_app.api.service.Topic
+import com.example.login_app.ui.login.TestViewModelFactory
+import com.example.login_app.ui.login.TopicViewModelFactory
 
 
 class TestFragment : Fragment() {
 
-    //var subjectTV:TextView? = null
-   // var spinner:Spinner? = null
-   //  var button:Button? = null
-    //var spinnerArrayAdapter: ArrayAdapter<String>? = null
+    private lateinit var testViewModel: TestViewModel
+    private lateinit var topicViewModel: TopicViewModel
+    
+    var subject:MySubject? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,51 +35,88 @@ class TestFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val root = inflater.inflate(R.layout.activity_test, container, false)
+        val  root = inflater.inflate(R.layout.activity_test, container, false)
 
-        setData(root)
-        return root
-    }
+        val subjAvTV = root?.findViewById<TextView>(R.id.isSubjAv)
+       val subjectTV = root?.findViewById<TextView>(R.id.subjectName)
+       val spinner = root?.findViewById<Spinner>(R.id.spinner)
+       val button = root?.findViewById<Button>(R.id.runtest)
+        val loading = root?.findViewById<ProgressBar>(R.id.loadingTest)
 
-    fun setData(root:View){
-
-        val subjectTV = root.findViewById<TextView>(R.id.subjectName)
-        val spinner = root.findViewById<Spinner>(R.id.spinner)
-        val loadTV = root.findViewById<TextView>(R.id.loadingTV)
-        val button = root.findViewById<Button>(R.id.runtest)
+        loading?.visibility = View.VISIBLE
+        testViewModel = ViewModelProvider(this, TestViewModelFactory())
+                .get(TestViewModel::class.java)
 
         val activity: MenuActivity? = activity as MenuActivity?
-        val list = activity?.getTopicList()
-        val subject = activity?.getSubject()
-
-
-        if (subject !=null ){
-            Log.d("Pretty Printed JSON :", "TestFregment subject not null : " + subject.getFullName() )
-            subjectTV.text = subject.getFullName()
-            loadTV.visibility = View.INVISIBLE
+        //здесь отправляется запрос
+        if (activity?.groupId == null){
+            Log.d("Pretty Printed JSON :", "В TestFragment groupId пришел нулевым")
+        }else{
+            testViewModel.getSubject(activity.groupId!!)
         }
-        if (list != null) {
-            var spinnerArrayAdapter =
-                    ArrayAdapter<Topic>(root.context, android.R.layout.simple_spinner_item, list)
-            spinnerArrayAdapter?.setDropDownViewResource(android.R.layout.simple_spinner_item)
-            spinner?.adapter = spinnerArrayAdapter
-            spinner?.setSelection(0)
-            spinner?.onItemSelectedListener = object : OnItemSelectedListener {
-                override fun onItemSelected(
-                        parent: AdapterView<*>,
-                        view: View,
-                        position: Int,
-                        id: Long
-                ) {
 
-                    val selectedItem =
-                            parent.getItemAtPosition(position) //this is your selected item
-                    button?.isEnabled = selectedItem != list[0]
+        testViewModel.subjectResult.observe(viewLifecycleOwner, Observer {
+            val subjectResult = it ?: return@Observer
+
+            if (subjectResult.error != null) {
+               subjAvTV?.text = subjectResult.error
+            }
+            if (subjectResult.success != null) {
+                subject = MySubject()
+                subject!!.setId(subjectResult.success.subjectId)
+                subject!!.setShName(subjectResult.success.shortName)
+                subject!!.setFullName(subjectResult.success.fullName)
+
+                Log.d("Pretty Printed JSON :", "Предмет пришел удачно" + subject!!.getFullName())
+
+                topicViewModel = ViewModelProvider(this, TopicViewModelFactory())
+                        .get(TopicViewModel::class.java)
+                
+                topicViewModel.getTopics(subject!!.getId())
+
+                topicViewModel.topicsResult.observe(viewLifecycleOwner, Observer {
+                    val topicsResult = it ?: return@Observer
+
+                    loading?.visibility = View.GONE
+                    if (topicsResult.error != null) {
+                        Log.d("Pretty Printed JSON :", "Нет доступного предмета" + topicsResult.error)
+                        subjAvTV?.text = subject!!.getFullName()
+                    }
+                    if (topicsResult.success != null) {
+                        var list = ArrayList<Topic>()
+                        var topic = Topic()
+                        topic.setName("Выберите предмет")
+                        list.add(topic)
+                        list.addAll(topicsResult.success.listT)
+
+                        var spinnerArrayAdapter =
+                        ArrayAdapter<Topic>(root.context, R.layout.spinner_item, list)
+                       spinnerArrayAdapter?.setDropDownViewResource(R.layout.spinner_item)
+                        spinner?.adapter = spinnerArrayAdapter
+                        spinner?.setSelection(0)
+                         spinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                            parent: AdapterView<*>,
+                            view: View,
+                            position: Int,
+                            id: Long
+                    ) {
+                        val selectedItem =
+                                parent.getItemAtPosition(position) //this is your selected item
+                        button?.isEnabled = selectedItem != list[0]
+                    }
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
                 }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-            }
-        }
-    }
+                        subjAvTV?.text = "Сейчас доступен предмет: "
+                        subjectTV?.text = subject!!.getFullName()
+                        spinner?.visibility = View.VISIBLE
+                        button?.visibility = View.VISIBLE
+                    }
+                })
 
+            }
+        })
+        return root
+    }
 }// Required empty public constructor

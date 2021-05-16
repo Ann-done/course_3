@@ -13,3 +13,8 @@ data class SubjectResult(
         val error:String? = null
 
 )
+
+data class TopicResult(
+        val success: ReturnedTopics? = null,
+        val error: String? = null
+)

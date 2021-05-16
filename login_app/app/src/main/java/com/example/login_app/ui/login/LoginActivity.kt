@@ -2,6 +2,7 @@ package com.example.login_app.ui.login
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -46,7 +47,10 @@ class LoginActivity : AppCompatActivity() {
             val loginState = it ?: return@Observer
 
             // disable login button unless both username / password is valid
-            login.isEnabled = loginState.isDataValid
+            if (loginState.isDataValid){
+                login.isEnabled = true
+                //login.background = Drawabl
+            }
 
             if (loginState.usernameError != null) {
                 username.error = getString(loginState.usernameError)
@@ -63,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
             if (loginResult.error != null) {
                 username.visibility = View.VISIBLE
                 password.visibility = View.VISIBLE
+                login.visibility = View.VISIBLE
                 username.setText("")
                 password.setText("")
                showLoginFailed(loginResult.error)
@@ -114,6 +119,7 @@ class LoginActivity : AppCompatActivity() {
                 loading.visibility = View.VISIBLE
                username.visibility = View.INVISIBLE
                 password.visibility = View.INVISIBLE
+                login.visibility = View.INVISIBLE
                loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }

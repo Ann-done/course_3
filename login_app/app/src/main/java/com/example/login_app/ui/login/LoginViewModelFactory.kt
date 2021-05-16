@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.login_app.data.LoginDataSource
 import com.example.login_app.data.LoginRepository
 import com.example.login_app.ui.menu.TestViewModel
+import com.example.login_app.ui.menu.TopicViewModel
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.
@@ -31,6 +32,16 @@ class TestViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TestViewModel::class.java)) {
             return TestViewModel( ) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
+class TopicViewModelFactory : ViewModelProvider.Factory{
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(TopicViewModel::class.java)) {
+            return TopicViewModel( ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
