@@ -6,34 +6,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/black">
 
         <TextView
-            android:layout_width="400dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Предметы"
-            android:textAlignment="center"
+            android:text="Сейчас доступен:"
+            android:textColor="@color/white"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="30dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textSize="10pt"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="Криптографические методы защиты"
             android:textColor="@color/white"
             android:textSize="14pt" />
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="250dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:gravity="center"
-
             />
 
-        <TextView
-            android:layout_width="400dp"
-            android:layout_height="362dp"
-            android:gravity="center"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="14pt" />
+        <ProgressBar
+            android:id="@+id/loadingTest"
+            android:indeterminateTint="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="364dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="64dp"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/runtest"

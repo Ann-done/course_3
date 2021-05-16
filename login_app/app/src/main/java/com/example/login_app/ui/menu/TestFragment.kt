@@ -1,5 +1,6 @@
 package com.example.login_app.ui.menu
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,11 @@ class TestFragment : Fragment() {
         val activity: MenuActivity? = activity as MenuActivity?
         val list = activity?.getTestList()
         val button = root.findViewById<Button>(R.id.runtest)
+
+        button.setOnClickListener {
+            runtest(root)
+        }
+
         if (list != null) {
             val spinnerArrayAdapter: ArrayAdapter<String> =
                 ArrayAdapter<String>(root.context, android.R.layout.simple_spinner_item, list)
@@ -52,5 +58,13 @@ class TestFragment : Fragment() {
         }
 
         return root
+    }
+
+    fun runtest(view: View){
+        val intent = Intent(view.context, TestActivity::class.java).apply {
+            putExtra("topicid", 123)
+
+        }
+        startActivity(intent)
     }
 }// Required empty public constructor
