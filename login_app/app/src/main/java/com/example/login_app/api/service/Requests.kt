@@ -85,7 +85,7 @@ fun reqGetSubject(groupId: Int, callback: (MySubject?) -> Unit){
     })
 }
 
-fun reqGetTopics (subjectId: Int){
+fun reqGetTopics (subjectId: Int, callback:(List<Topic>?) -> Unit){
 
 //    val req:JSONObject = JSONObject()
 //    req.put("Id", subjectId)
@@ -95,17 +95,12 @@ fun reqGetTopics (subjectId: Int){
                 response: Response<List<Topic>?>
         ) {
             val list: List<Topic>? = response.body()
-            if (list != null) {
-                for (topic in list) {
-                    Log.d("Pretty Printed JSON :", "Topic id: " + topic.getId() + "; Name : " + topic.getName())
-                }
-            } else {
-                Log.d("Pretty Printed JSON :", "list is null")
-            }
+            callback(list)
         }
 
         override fun onFailure(call: Call<List<Topic>?>, t: Throwable) {
             Log.e("RETROFIT_ERROR", "error")
+            callback(null)
             t.printStackTrace()
         }
     })
