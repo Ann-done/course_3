@@ -28,4 +28,12 @@ class Topic {
     fun setName(name: String) {
         this.topicName = name
     }
+
+    override fun toString(): String {
+        return if(this.getName() == null){
+            "empty topic name"
+        }else {
+            this.getName()!!
+        }
+    }
 }
