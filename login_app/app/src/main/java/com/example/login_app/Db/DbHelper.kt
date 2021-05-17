@@ -9,8 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper
 class DbHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_RESULTS + "(" + KEY_ID
-                + " integer primary key," + KEY_QUNUM + " integer," + KEY_RANSNUM + " integer" +
-                KEY_MARK + " integer," + KEY_STUDENTID + " text" +
+                + " integer primary key," + KEY_QUNUM + " integer," + KEY_RANSNUM + " integer," +
+                KEY_MARK + " integer," + KEY_STUDENTID + " text," +
                 KEY_TOPICNAME + " text," + KEY_SUBJECTNAME + " text" +")")
     }
 

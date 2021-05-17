@@ -75,9 +75,9 @@ class SendResViewModel: ViewModel(){
     private val _postResResult = MutableLiveData<SendResResult>()
     val postResResult: LiveData<SendResResult> = _postResResult
 
-    fun sendResult(result: Result, groupId: Int, subjectId: Int, topicId: Int) {
+    fun sendResult(db:DbHelper? ,result: Result, groupId: Int, subjectId: Int, topicId: Int) {
 
-        reqPostResult(result, groupId, subjectId, topicId) { savedResId: Int ->
+        reqPostResult(db, result, groupId, subjectId, topicId) { savedResId: Int ->
             if (savedResId == 0){
                 Log.d("Pretty Printed JSON :", "Тест не сохранен")
                 _postResResult.value = SendResResult(error = "Вы не успели отправить тест вовремя")

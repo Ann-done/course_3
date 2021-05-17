@@ -27,6 +27,8 @@ class TestFragment : Fragment() {
     var studentId: String? = null
     var groupId:Int = 0
     var topicName: String? = null;
+    var username: String? = null;
+    var password: String? = null;
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -50,6 +52,8 @@ class TestFragment : Fragment() {
         val activity: MenuActivity? = activity as MenuActivity?
         studentId = activity?.studentId
         groupId = activity?.groupId!!
+        username = activity.username
+        password = activity.studentId
         //здесь отправляется запрос
 
         testViewModel.getSubject(groupId)
@@ -103,7 +107,7 @@ class TestFragment : Fragment() {
                     if (topicsResult.success != null) {
                         var list = ArrayList<Topic>()
                         var topic = Topic()
-                        topic.setName("Выберите предмет")
+                        topic.setName("- Выберите предмет - ")
                         list.add(topic)
                         list.addAll(topicsResult.success.listT)
 
@@ -157,24 +161,18 @@ class TestFragment : Fragment() {
         return root
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        // получаем результат
-//        if (resultCode == RESULT_OK){
-//            //запрос на подтверждение прохождения теста
-//
-//            //start result fragment
-//        }
-//    }
-
     fun runtest(view: View, id: Int){
         val intent = Intent(view.context, TestActivity::class.java).apply {
             putExtra("topicId", id)
             putExtra("topicName", topicName)
+            putExtra("subjectName", subject?.getShName())
             putExtra("studentId",studentId )
             putExtra("groupId", groupId)
             putExtra("subjectId", subject?.getId())
+            putExtra("username", username)
+            putExtra("password", password)
         }
-        startActivityForResult(intent, 1)
+        startActivity(intent)
     }
 
 }// Required empty public constructor

@@ -5,7 +5,7 @@
     <string name="prompt_password">Номер карточки</string>
     <string name="action_sign_in">Войти</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
+    <string name="welcome">"Здравствуй! "</string>
     <string name="invalid_username">Введите данные в формате "Фамилия(пробел)Имя"</string>
     <string name="invalid_password">Вы не верно ввели номер карточки</string>
     <string name="login_failed">"Login failed"</string>

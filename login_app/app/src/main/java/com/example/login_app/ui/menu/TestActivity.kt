@@ -1,6 +1,7 @@
 package com.example.login_app.ui.menu
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,8 @@ import com.example.login_app.api.service.Result
 import com.example.login_app.api.service.Task
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.login_app.Db.DbHelper
+import com.example.login_app.ui.login.LoginActivity
 import com.example.login_app.ui.login.SendResViewModelFactory
 import com.example.login_app.ui.login.TaskViewModelFactory
 import java.util.*
@@ -36,8 +39,12 @@ class TestActivity : AppCompatActivity() {
     var studentId: String? = null
     var groupId: Int = 0
     var subjectId: Int = 0
+    var subjectName: String? = null
     var loadTest: ProgressBar? = null
+    var username:String? = null
+    var password:String? = null;
 
+    var dbHelper: DbHelper? = null
     private lateinit var taskViewModel: TaskViewModel
     private lateinit var postResViewModel: SendResViewModel
 
@@ -48,6 +55,9 @@ class TestActivity : AppCompatActivity() {
         studentId = intent.getStringExtra("studentId")
         groupId = intent.getIntExtra("groupId",0)
         subjectId = intent.getIntExtra("subjectId",0)
+        subjectName = intent.getStringExtra("subjectName")
+        username = intent.getStringExtra("username")
+        password = intent.getStringExtra("password")
 
         setContentView(R.layout.run_test_activity2)
 
@@ -71,6 +81,7 @@ class TestActivity : AppCompatActivity() {
                 findViewById(R.id.answer_4)
         )
 
+        dbHelper = DbHelper(this);
 
         taskViewModel = ViewModelProvider(this, TaskViewModelFactory())
                 .get(TaskViewModel::class.java)
@@ -113,14 +124,13 @@ class TestActivity : AppCompatActivity() {
 
             loadTest?.visibility = View.GONE
             if (resIdResult.error != null) {
-                //TODO вывести что тест не сохранен
-                Toast.makeText(applicationContext, resIdResult.error, Toast.LENGTH_LONG).show()
-                //завершить работу активити
-                //endtest()
+                numOfQuestion!!.text = resIdResult.error
+                buttonNext?.visibility = View.VISIBLE
+                buttonNext?.text = "Ок"
             }
             if (resIdResult.success != null) {
-                numOfQuestion!!.text = "Ваш результат успешно сохранен!\n" +
-                        topicName + "\n\n" + "Правильных ответов: " + countOfRightAnswers + " из " + countOfQ + "\n" +
+                numOfQuestion!!.text = "Ваш результат успешно сохранен!\n\n" +
+                        topicName + "\n\n" + "Правильных ответов: " + countOfRightAnswers + " из " + countOfQ + "\n\n" +
                         " Оценка : " +   countOfRightAnswers * 10 / countOfQ
 
                 buttonNext?.visibility = View.VISIBLE
@@ -129,8 +139,6 @@ class TestActivity : AppCompatActivity() {
         })
 
     }
-
-
 
     private fun setView() {
         val task = listOfTasks!![qCounter-1]
@@ -157,11 +165,13 @@ class TestActivity : AppCompatActivity() {
         numOfQuestion!!.text = ""
 
         var result = Result()
+        result.topicName = topicName
+        result.subjectName = subjectName
         result.studentId = studentId
         result.quNum = countOfQ
         result.rightAnsNum = countOfRightAnswers
         result.mark =  countOfRightAnswers * 10 / countOfQ
-        postResViewModel.sendResult(result , groupId, subjectId , topicId!!)
+        postResViewModel.sendResult(dbHelper, result , groupId, subjectId , topicId)
         //запрос
 //        val intent = Intent();
 //        intent.putExtra("quNum", countOfQ)
@@ -219,6 +229,14 @@ class TestActivity : AppCompatActivity() {
             }
             "Ок" -> {
                 //завернить работу активити
+                val intent = Intent(this, MenuActivity::class.java).apply {
+                    putExtra("username", username)
+                    putExtra("password", password)
+                    putExtra("groupId", groupId)
+                    putExtra("num",2)
+                }
+                startActivity(intent)
+                finishAffinity()
             }
             else -> {
             }

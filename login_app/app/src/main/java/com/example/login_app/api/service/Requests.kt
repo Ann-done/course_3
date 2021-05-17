@@ -136,7 +136,7 @@ fun reqGetTest(topicId: Int, callback: (List<Task>?) -> Unit){
 
 }
 
-fun reqPostResult(result: Result, groupId: Int, subjectId: Int, topicId: Int, callback: (Int) -> Unit){
+fun reqPostResult(db: DbHelper?, result: Result, groupId: Int, subjectId: Int, topicId: Int, callback: (Int) -> Unit){
     val req:JSONObject = JSONObject()
     req.put("StudentId", result.studentId)
     req.put("GroupId", groupId)
@@ -150,10 +150,22 @@ fun reqPostResult(result: Result, groupId: Int, subjectId: Int, topicId: Int, ca
             ?.enqueue(object : Callback<Int> {
 
                 override fun onResponse(call: Call<Int>, response: Response<Int>) {
-                    val list: Int? = response.body()
-                    if (list != 0) {
-                        Log.d("Pretty Printed JSON :", "Результат сохранился на сервера")
-                        callback(list!!);
+                    val lastID: Int? = response.body()
+                    if (lastID != 0) {
+                        Log.d("Pretty Printed JSON :", "Результат сохранился на сервере и в лок ")
+                                // сохранять с новым id
+                        val database = db!!.writableDatabase
+                        val values = ContentValues()
+                        values.put(DbHelper.KEY_ID, lastID)
+                        values.put(DbHelper.KEY_QUNUM, result.quNum)
+                        values.put(DbHelper.KEY_RANSNUM, result.rightAnsNum)
+                        values.put(DbHelper.KEY_MARK, result.mark)
+                        values.put(DbHelper.KEY_STUDENTID, result.studentId)
+                        values.put(DbHelper.KEY_TOPICNAME, result.topicName)
+                        values.put(DbHelper.KEY_SUBJECTNAME, result.subjectName)
+
+                        database.insert(DbHelper.TABLE_RESULTS, null, values)
+                        callback(1);
                     } else {
                         Log.d("Pretty Printed JSON :", "Результат НЕ сохранился на сервера")
                         callback(0);
@@ -172,9 +184,9 @@ fun reqGetNewResults(db: DbHelper?, studentId: String, callback: (Int) -> Unit){
 
     // получаем последний локальный id
     val database = db!!.writableDatabase
-    val cursor: Cursor = database.rawQuery("select top(1) " + DbHelper.KEY_ID + " from " + DbHelper.TABLE_RESULTS
-            + " where " + DbHelper.KEY_STUDENTID + "=" + studentId +
-            " order by " + DbHelper.KEY_ID + " desc", null)
+    val cursor: Cursor = database.rawQuery("select " + DbHelper.KEY_ID + " from " + DbHelper.TABLE_RESULTS
+            + " where " + DbHelper.KEY_STUDENTID + "='" + studentId +"' " +
+            " order by " + DbHelper.KEY_ID + " desc limit 1", null)
     var resId : Int
     if (cursor.moveToFirst()){
         resId = cursor.getInt(cursor.getColumnIndex(DbHelper.KEY_ID))
@@ -228,7 +240,7 @@ fun getLocResults(db: DbHelper?, studentId: String, callback: (ArrayList<Result>
     val listResults : ArrayList<Result> = ArrayList<Result>()
     val database = db!!.writableDatabase
     val cursor: Cursor = database.rawQuery("select * from " + DbHelper.TABLE_RESULTS
-            + " where " + DbHelper.KEY_STUDENTID + "=" + studentId, null)
+            + " where " + DbHelper.KEY_STUDENTID + "='" + studentId + "'", null)
 
     if (cursor.moveToFirst()) {
         val idIndex: Int = cursor.getColumnIndex(DbHelper.KEY_ID)
@@ -256,4 +268,25 @@ fun getLocResults(db: DbHelper?, studentId: String, callback: (ArrayList<Result>
         callback(null)
     }
 
+}
+
+
+fun reqlogOut(id: String){//настроить возврат
+
+    val req:JSONObject = JSONObject()
+    req.put("id", id)
+
+    NetworkService.getInstance()!!.getJSONApi()!!.postLogOut(req.toString())!!.enqueue(object : Callback<Logout?> {
+
+        override fun onResponse(call: Call<Logout?>, response: Response<Logout?>) {
+
+            val response = response.body()
+            Log.d("Pretty Printed JSON :", "Message for log out " + response?.message)
+        }
+
+        override fun onFailure(call: Call<Logout?>, t: Throwable) {
+            Log.e("RETROFIT_ERROR", "error")
+            t.printStackTrace()
+        }
+    })
 }

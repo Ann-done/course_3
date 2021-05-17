@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.example.login_app.R
 import com.example.login_app.api.service.Result
+import com.example.login_app.api.service.reqlogOut
 import com.example.login_app.ui.login.LoginActivity
 import com.google.android.material.tabs.TabLayout
 
@@ -20,6 +21,7 @@ class MenuActivity : AppCompatActivity() {
     var username:String? = null
     var groupId :Int? = null
     var studentId:String? = null
+    var num:Int = 0
 
 
   //  private var listTopics:ArrayList<Topic>?=null
@@ -33,8 +35,11 @@ class MenuActivity : AppCompatActivity() {
         username = intent.getStringExtra("username")
         studentId = intent.getStringExtra("password")
         groupId = intent.getIntExtra("groupId", 0)
+        num = intent.getIntExtra("num", 0)
 
-        updateUiWithUser(username)
+        if (num == 1){
+            updateUiWithUser(username)
+        }
 
         tabLayout = findViewById<TabLayout>(R.id.tabs)
         viewPager = findViewById<ViewPager>(R.id.viewpager)
@@ -72,6 +77,7 @@ class MenuActivity : AppCompatActivity() {
         image_button.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View?) {
                 // TODO : add logout request
+                reqlogOut(studentId!!)
                 val intent = Intent(view?.context, LoginActivity::class.java)
                 startActivity(intent)
                 finishAffinity()
@@ -79,16 +85,6 @@ class MenuActivity : AppCompatActivity() {
         })
 
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (resultCode == RESULT_OK){
-//            // запрос
-//        }
-//        // change tab programmily
-////        val fragment: Fragment? = supportFragmentManager.findFragmentById(R.id.testfragment)
-////        fragment?.onActivityResult(requestCode, resultCode, data)
-//    }
 
     private fun updateUiWithUser(displayname: String?) {
         val welcome = getString(R.string.welcome)

@@ -79,6 +79,7 @@ class LoginActivity : AppCompatActivity() {
                     putExtra("username", fullname)
                     putExtra("password", loginResult.success.userId)
                     putExtra("groupId", loginResult.success.groupId)
+                    putExtra("num",1)
 
                 }
                 startActivity(intent)

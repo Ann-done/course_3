@@ -28,4 +28,7 @@ interface JSONServerApi {
 
    @POST("/api/values/getNewRes")
    fun postGetNewRes(@Body data: String) : Call<List<Result>>?
+
+    @POST("/api/values/logOut")
+    fun postLogOut(@Body data: String): Call<Logout>? //вместе с id предмета
 }
