@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.login_app.api.service.MySubject
-import com.example.login_app.api.service.Topic
-import com.example.login_app.api.service.reqGetSubject
-import com.example.login_app.api.service.reqGetTopics
+import com.example.login_app.api.service.*
 import com.example.login_app.ui.login.*
 
 class TestViewModel : ViewModel(){
@@ -47,6 +44,25 @@ class TopicViewModel :ViewModel(){
             else{
 
                 _topicsResult.value = TopicResult(success = ReturnedTopics(listT=listTopics))
+            }
+        }
+
+    }
+}
+
+class TaskViewModel: ViewModel(){
+    private val _tasksResult = MutableLiveData<TaskResult>()
+    val tasksResult: LiveData<TaskResult> = _tasksResult
+
+    fun getTasks(topicId:Int) {
+
+        reqGetTest(topicId) { listTasks: List<Task>? ->
+            if (listTasks == null){
+                Log.d("Pretty Printed JSON :", "Тест пришел пустым")
+                _tasksResult.value = TaskResult(error = "Тест не доступен")
+            }
+            else{
+                _tasksResult.value = TaskResult(success = ReturnedTasks(listTasks=listTasks))
             }
         }
 

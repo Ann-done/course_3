@@ -18,3 +18,8 @@ data class TopicResult(
         val success: ReturnedTopics? = null,
         val error: String? = null
 )
+
+data class TaskResult(
+        val success: ReturnedTasks? = null,
+        val error: String? = null
+)

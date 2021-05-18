@@ -82,7 +82,7 @@ class MenuActivity : AppCompatActivity() {
         val welcome = getString(R.string.welcome)
         // TODO : initiate successful logged in experience
         Log.d("Pretty Printed JSON :", "Здравствуй!" + displayname)
-        Toast.makeText(applicationContext, "$welcome $displayname", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, "$welcome $displayname", Toast.LENGTH_LONG).show()
     }
 
     fun getResults(): ArrayList<Result>?{

@@ -1,5 +1,6 @@
 package com.example.login_app.ui.login
 
+import com.example.login_app.api.service.Task
 import com.example.login_app.api.service.Topic
 
 /**
@@ -22,4 +23,8 @@ data class ReturnedSubject(
 
 data class ReturnedTopics(
         val listT: List<Topic>
+)
+
+data class ReturnedTasks(
+        val listTasks: List<Task>
 )

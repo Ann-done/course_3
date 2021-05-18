@@ -66,14 +66,14 @@ fun reqGetSubject(groupId: Int, callback: (MySubject?) -> Unit){
 
     val req:JSONObject = JSONObject()
     req.put("Id", groupId)
-    var subject :MySubject = MySubject()
+    var subject :MySubject? = MySubject()
 
     NetworkService.getInstance()!!.getJSONApi()!!.postGetSubject(req.toString())?.enqueue(object : Callback<MySubject?> {
 
         override fun onResponse(call: Call<MySubject?>, response: Response<MySubject?>) {
             val mySubject_temp = response.body()
             Log.d("Pretty Printed JSON :", "Subject from response  : Get subject from server ")
-            subject = mySubject_temp!! //вернет либо null либо subject
+            subject = mySubject_temp //вернет либо null либо subject
            callback(subject)
         }
 
@@ -106,7 +106,7 @@ fun reqGetTopics (subjectId: Int, callback:(List<Topic>?) -> Unit){
     })
 }
 
-fun reqPostTest(topicId: Int){
+fun reqGetTest(topicId: Int, callback:(List<Task>?) -> Unit){
     val req:JSONObject = JSONObject()
     req.put("Id", topicId)
 
@@ -116,12 +116,11 @@ fun reqPostTest(topicId: Int){
                 override fun onResponse(call: Call<List<Task>?>, response: Response<List<Task>?>) {
                     val list: List<Task>? = response.body()
                     if (list != null) {
-                        for (task in list) {
-                            Log.d("Pretty Printed JSON :", "qustion : " + task.getQuestion() + "; "
-                            + "Answers : 1" + task.getAnswers()!!.get(1) )
-                        }
+                        Log.d("Pretty Printed JSON :", "Тест с вопросами пришел успешно" )
+                        callback(list);
                     } else {
                         Log.d("Pretty Printed JSON :", "list task is null")
+                        callback(null);
                     }
                 }
 

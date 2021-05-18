@@ -43,6 +43,7 @@ class TestFragment : Fragment() {
         val spinner = root?.findViewById<Spinner>(R.id.spinner)
         val button = root?.findViewById<Button>(R.id.runtest)
         val loading = root?.findViewById<ProgressBar>(R.id.loadingTest)
+        val resend = root?.findViewById<ImageButton>(R.id.resend)
 
         loading?.visibility = View.VISIBLE
         testViewModel = ViewModelProvider(this, TestViewModelFactory())
@@ -56,11 +57,14 @@ class TestFragment : Fragment() {
             testViewModel.getSubject(activity.groupId!!)
         }
 
+        var topicId: Int = 0;
         testViewModel.subjectResult.observe(viewLifecycleOwner, Observer {
             val subjectResult = it ?: return@Observer
 
             if (subjectResult.error != null) {
-               subjAvTV?.text = subjectResult.error
+                loading?.visibility = View.GONE
+                subjAvTV?.text = subjectResult.error
+                resend?.visibility = View.VISIBLE
             }
             if (subjectResult.success != null) {
                 subject = MySubject()
@@ -80,8 +84,21 @@ class TestFragment : Fragment() {
 
                     loading?.visibility = View.GONE
                     if (topicsResult.error != null) {
-                        Log.d("Pretty Printed JSON :", "Нет доступного предмета" + topicsResult.error)
+                        Log.d("Pretty Printed JSON :", "Нет доступных тем" + topicsResult.error)
+                        loading?.visibility = View.GONE
+                        subjAvTV?.text = "Сейчас доступен предмет: "
                         subjAvTV?.text = subject!!.getFullName()
+                                // вывод отсутствия тем
+                        var list = ArrayList<Topic>()
+                        var topic = Topic()
+                        topic.setName("-Нет доступных тем-")
+                        list.add(topic)
+                        var spinnerArrayAdapter =
+                                ArrayAdapter<Topic>(root.context, R.layout.spinner_item, list)
+                        spinnerArrayAdapter?.setDropDownViewResource(R.layout.spinner_item)
+                        spinner?.adapter = spinnerArrayAdapter
+                        spinner?.setSelection(0)
+                        resend?.visibility = View.VISIBLE
                     }
                     if (topicsResult.success != null) {
                         var list = ArrayList<Topic>()
@@ -105,27 +122,44 @@ class TestFragment : Fragment() {
                         val selectedItem =
                                 parent.getItemAtPosition(position) //this is your selected item
                         button?.isEnabled = selectedItem != list[0]
+                        topicId = list[list.indexOf(selectedItem)].getId()
                     }
                     override fun onNothingSelected(parent: AdapterView<*>?) {}
                 }
-
                         subjAvTV?.text = "Сейчас доступен предмет: "
                         subjectTV?.text = subject!!.getFullName()
                         spinner?.visibility = View.VISIBLE
                         button?.visibility = View.VISIBLE
+                        resend?.visibility = View.VISIBLE
                     }
                 })
 
             }
         })
+
+        resend?.setOnClickListener{
+            testViewModel.getSubject(activity?.groupId!!)
+            loading?.visibility = View.VISIBLE
+            subjAvTV?.text = ""
+            subjectTV?.text = ""
+            spinner?.visibility = View.INVISIBLE
+            button?.visibility = View.INVISIBLE
+            resend.visibility = View.INVISIBLE
+
+        }
+        button?.setOnClickListener {
+            if (topicId!=0){
+              runtest(root, topicId)
+            }
+        }
         return root
     }
 
-    fun runtest(view: View){
+    fun runtest(view: View, id: Int){
         val intent = Intent(view.context, TestActivity::class.java).apply {
-            putExtra("topicid", 123)
-
+            putExtra("topicId", id)
         }
         startActivity(intent)
     }
+
 }// Required empty public constructor

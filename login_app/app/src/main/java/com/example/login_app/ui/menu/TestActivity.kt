@@ -4,13 +4,17 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.login_app.BuildConfig
 import com.example.login_app.R
 import com.example.login_app.api.service.Result
 import com.example.login_app.api.service.Task
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.example.login_app.ui.login.TaskViewModelFactory
+import com.example.login_app.ui.login.TestViewModelFactory
+import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.util.*
 
@@ -21,6 +25,7 @@ class TestActivity : AppCompatActivity() {
     var listcheckBoxes: List<CheckBox>? = null
     var listanswerTexts: List<TextView>? = null
 
+    var viewTest: LinearLayout? = null
     var buttonNext: Button? = null
 
     var listOfTasks: List<Task>? = null
@@ -30,80 +35,72 @@ class TestActivity : AppCompatActivity() {
     var countOfRightAnswers: Int = 0
 
     var topicId:Int?=null
+    var loadTest: ProgressBar? = null
+
+    private lateinit var taskViewModel: TaskViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        topicId = intent.getIntExtra(("topicid"),0)
-        assert(topicId == 123)
+        topicId = intent.getIntExtra(("topicId"), 0)
 
         setContentView(R.layout.run_test_activity2)
 
         numOfQuestion = findViewById(R.id.numOfQuestion)
         question = findViewById(R.id.question)
+        viewTest = findViewById(R.id.viewBoxText)
+        buttonNext = findViewById(R.id.buttonNext)
+        loadTest = findViewById(R.id.loadingTest)
 
         listcheckBoxes = listOf(
-            findViewById(R.id.checkbox_1),
-            findViewById(R.id.checkbox_2),
-            findViewById(R.id.checkbox_3),
-            findViewById(R.id.checkbox_4)
+                findViewById(R.id.checkbox_1),
+                findViewById(R.id.checkbox_2),
+                findViewById(R.id.checkbox_3),
+                findViewById(R.id.checkbox_4)
         )
 
         listanswerTexts = listOf(
-            findViewById(R.id.answer_1),
-            findViewById(R.id.answer_2),
-            findViewById(R.id.answer_3),
-            findViewById(R.id.answer_4)
+                findViewById(R.id.answer_1),
+                findViewById(R.id.answer_2),
+                findViewById(R.id.answer_3),
+                findViewById(R.id.answer_4)
         )
 
-        buttonNext = findViewById(R.id.buttonNext)
 
+        taskViewModel = ViewModelProvider(this, TaskViewModelFactory())
+                .get(TaskViewModel::class.java)
         //Todo: тут запросы
-        setListTasks(topicId)
+        taskViewModel.getTasks(topicId!!)
+        taskViewModel.tasksResult.observe(this@TestActivity, Observer {
+            val tasksResult = it ?: return@Observer
 
-        countOfQ = listOfTasks?.size!!
+            loadTest?.visibility = View.GONE
+            if (tasksResult.error != null) {
+                //TODO кнопка для возврата на прошлую активити обратотка null
+                Toast.makeText(applicationContext, "tasksResult.error", Toast.LENGTH_LONG).show()
+                endtest()
+            }
+            if (tasksResult.success != null) {
+                listOfTasks = tasksResult.success.listTasks
+                viewTest?.visibility = View.VISIBLE
+                buttonNext?.visibility = View.VISIBLE
+                countOfQ = listOfTasks?.size!!
 
-        qCounter = 1
-        countOfRightAnswers = 0
-        val dialog = AlertDialog.Builder(
-            this@TestActivity
-        )
-            .setMessage("После нажатия на кнопку 'Подтвердить', будут показаны результаты по этому вопросу")
-            .setPositiveButton(
-                "Ok"
-            ) { _, _ -> setView() }.create()
-        dialog.show()
+                qCounter = 1
+                countOfRightAnswers = 0
+                val dialog = AlertDialog.Builder(
+                        this@TestActivity
+                )
+                        .setMessage("После нажатия на кнопку 'Подтвердить', будут показаны результаты по этому вопросу")
+                        .setPositiveButton(
+                                "Ok"
+                        ) { _, _ -> setView() }.create()
+                dialog.show()
+            }
+        })
+
     }
 
-    private fun setListTasks(topicid: Int?) {
-        val topic1 = Task()
-        val topic2 = Task()
 
-        var q1 = "Question 1"
-        var q2 = "Question 2"
-
-        val a1 = HashMap<Int, String>()
-        a1[111] = "a"
-        a1[222] = "b"
-        a1[333] = "c"
-        a1[444] = "d"
-
-        val a2 = HashMap<Int, String>()
-        a2[1] = "aa"
-        a2[2] = "bb"
-        a2[3] = "cc"
-        a2[4] = "dd"
-
-        var r1 = listOf<Int>(222,444)
-        var r2 = listOf<Int>(1)
-        topic1.setQuestion(q1)
-        topic1.setAnswers(a1)
-        topic1.setRightIds(r1)
-
-        topic2.setQuestion(q2)
-        topic2.setAnswers(a2)
-        topic2.setRightIds(r2)
-        listOfTasks = listOf(topic1,topic2)
-    }
 
     private fun setView() {
         val task = listOfTasks!![qCounter-1]
@@ -111,7 +108,7 @@ class TestActivity : AppCompatActivity() {
         val answers = task.getAnswers()
         val keys = answers?.keys?.toList()
 
-        numOfQuestion!!.text = qCounter.toString() + " из " + countOfQ.toString()
+        numOfQuestion!!.text = "Вопрос: " + qCounter.toString() + " из " + countOfQ.toString()
         question?.text = task.getQuestion()
         for (i in 0..3) {
             listanswerTexts?.get(i)!!.setTextColor(Color.GRAY)

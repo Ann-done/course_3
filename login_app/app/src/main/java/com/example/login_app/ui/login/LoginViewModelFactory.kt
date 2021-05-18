@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.login_app.data.LoginDataSource
 import com.example.login_app.data.LoginRepository
+import com.example.login_app.ui.menu.TaskViewModel
 import com.example.login_app.ui.menu.TestViewModel
 import com.example.login_app.ui.menu.TopicViewModel
 
@@ -42,6 +43,16 @@ class TopicViewModelFactory : ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TopicViewModel::class.java)) {
             return TopicViewModel( ) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
+class TaskViewModelFactory : ViewModelProvider.Factory{
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(TaskViewModel::class.java)) {
+            return TaskViewModel( ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
