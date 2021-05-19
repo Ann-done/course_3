@@ -1,11 +1,12 @@
 package com.example.login_app.ui.menu
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.example.login_app.R
 import com.example.login_app.api.service.Result
@@ -43,9 +44,9 @@ class MenuActivity : AppCompatActivity() {
         tabLayout!!.tabGravity = TabLayout.GRAVITY_FILL
 
         val adapter = PagerAdapter(
-            this,
-            supportFragmentManager,
-            tabLayout!!.tabCount
+                this,
+                supportFragmentManager,
+                tabLayout!!.tabCount
         )
 
         viewPager!!.adapter = adapter
@@ -56,9 +57,11 @@ class MenuActivity : AppCompatActivity() {
                 //Toast.makeText(this, "1", Toast.LENGTH_LONG).show()
 
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab) {
 
             }
+
             override fun onTabReselected(tab: TabLayout.Tab) {
 
             }
@@ -77,6 +80,15 @@ class MenuActivity : AppCompatActivity() {
 
     }
 
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (resultCode == RESULT_OK){
+//            // запрос
+//        }
+//        // change tab programmily
+////        val fragment: Fragment? = supportFragmentManager.findFragmentById(R.id.testfragment)
+////        fragment?.onActivityResult(requestCode, resultCode, data)
+//    }
 
     private fun updateUiWithUser(displayname: String?) {
         val welcome = getString(R.string.welcome)

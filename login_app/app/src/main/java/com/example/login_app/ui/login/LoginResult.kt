@@ -23,3 +23,8 @@ data class TaskResult(
         val success: ReturnedTasks? = null,
         val error: String? = null
 )
+
+data class SendResResult(
+        val success: ReturnedSendResult? = null,
+        val error: String? = null
+)

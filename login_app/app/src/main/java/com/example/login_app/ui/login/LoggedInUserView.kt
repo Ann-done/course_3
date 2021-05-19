@@ -28,3 +28,7 @@ data class ReturnedTopics(
 data class ReturnedTasks(
         val listTasks: List<Task>
 )
+
+data class ReturnedSendResult(
+        val postResId: Int
+)

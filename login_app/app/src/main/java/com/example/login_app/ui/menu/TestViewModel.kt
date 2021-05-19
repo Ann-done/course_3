@@ -33,13 +33,13 @@ class TopicViewModel :ViewModel(){
     private val _topicsResult = MutableLiveData<TopicResult>()
     val topicsResult: LiveData<TopicResult> = _topicsResult
 
-    fun getTopics(subjectId:Int) {
+    fun getTopics(subjectId:Int, studentId: String) {
 
-        reqGetTopics(subjectId) { listTopics: List<Topic>? ->
+        reqGetTopics(subjectId, studentId) { listTopics: List<Topic>? ->
 
             if (listTopics == null){
                 Log.d("Pretty Printed JSON :", "Темы пришли пустые")
-                _topicsResult.value = TopicResult(error = "Нет тем")
+                _topicsResult.value = TopicResult(error = "Нет доступных тем")
             }
             else{
 
@@ -63,6 +63,25 @@ class TaskViewModel: ViewModel(){
             }
             else{
                 _tasksResult.value = TaskResult(success = ReturnedTasks(listTasks=listTasks))
+            }
+        }
+
+    }
+}
+
+class SendResViewModel: ViewModel(){
+    private val _postResResult = MutableLiveData<SendResResult>()
+    val postResResult: LiveData<SendResResult> = _postResResult
+
+    fun sendResult(result: Result, groupId: Int, subjectId: Int, topicId:Int ) {
+
+        reqPostResult(result, groupId, subjectId,topicId ) { savedResId: Int ->
+            if (savedResId == 0){
+                Log.d("Pretty Printed JSON :", "Тест не сохранен")
+                _postResResult.value = SendResResult(error = "Вы не успели отправить тест вовремя")
+            }
+            else{
+                _postResResult.value = SendResResult(success = ReturnedSendResult(postResId = savedResId))
             }
         }
 

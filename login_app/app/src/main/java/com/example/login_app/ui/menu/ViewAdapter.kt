@@ -18,7 +18,7 @@ class ViewAdapter(context: Context, objects: ArrayList<Result>?) :
 
         val resObject: Result? = getItem(position)
         if (resObject != null) {
-            (convertView!!.findViewById<View>(R.id.TopicName) as TextView).text = resObject.topicId.toString()
+            (convertView!!.findViewById<View>(R.id.TopicName) as TextView).text = resObject.topicName.toString()
             (convertView.findViewById<View>(R.id.SubjectShortName) as TextView).text = resObject.id.toString()
             (convertView.findViewById<View>(R.id.Mark) as TextView).text = resObject.mark.toString()
             (convertView.findViewById<View>(R.id.RightAnswersNum) as TextView).text = resObject.rightAnswNum.toString()

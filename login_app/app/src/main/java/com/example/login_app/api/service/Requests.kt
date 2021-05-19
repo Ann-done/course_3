@@ -85,11 +85,13 @@ fun reqGetSubject(groupId: Int, callback: (MySubject?) -> Unit){
     })
 }
 
-fun reqGetTopics (subjectId: Int, callback:(List<Topic>?) -> Unit){
+fun reqGetTopics (subjectId: Int, studentId: String ,callback:(List<Topic>?) -> Unit){
 
-//    val req:JSONObject = JSONObject()
-//    req.put("Id", subjectId)
-    NetworkService.getInstance()!!.getJSONApi()!!.getTopics(subjectId)?.enqueue(object : Callback<List<Topic>?> {
+    val req:JSONObject = JSONObject()
+    req.put("SubjId", subjectId)
+    req.put("StudentId", studentId)
+
+    NetworkService.getInstance()!!.getJSONApi()!!.getTopics(req.toString())?.enqueue(object : Callback<List<Topic>?> {
         override fun onResponse(
                 call: Call<List<Topic>?>,
                 response: Response<List<Topic>?>
@@ -130,4 +132,36 @@ fun reqGetTest(topicId: Int, callback:(List<Task>?) -> Unit){
                 }
             })
 
+}
+
+fun reqPostResult(result: Result , groupId: Int, subjectId: Int, topicId: Int,callback:(Int) -> Unit){
+    val req:JSONObject = JSONObject()
+    req.put("StudentId", result.studentId)
+    req.put("GroupId", groupId )
+    req.put("SubjectId", subjectId)
+    req.put("TopicId", topicId)
+    req.put("QuNum", result.quNum)
+    req.put("RightAnsws", result.rightAnswNum)
+    req.put("Mark", result.mark)
+
+    NetworkService.getInstance()!!.getJSONApi()!!.postResult(req.toString())
+            ?.enqueue(object : Callback<Int> {
+
+                override fun onResponse(call: Call<Int>, response: Response<Int>) {
+                    val list: Int? = response.body()
+                    if (list != 0) {
+                        Log.d("Pretty Printed JSON :", "Результат сохранился на сервера" )
+                        callback(list!!);
+                    } else {
+                        Log.d("Pretty Printed JSON :", "Результат НЕ сохранился на сервера")
+                        callback(0);
+                    }
+                }
+
+                override fun onFailure(call: Call<Int>, t: Throwable) {
+                    Log.e("RETROFIT_ERROR", "error")
+                    callback(0);
+                    t.printStackTrace()
+                }
+            })
 }

@@ -17,10 +17,13 @@ interface JSONServerApi {
   @POST("/api/values/getsubject")
   fun postGetSubject(@Body data: String): Call<MySubject?>?
 
-  @GET("/api/values/gettopics/{idSubj}")
-  fun getTopics(@Path("idSubj") idSubj: Int): Call<List<Topic>?>?
+  @POST("/api/values/gettopics")
+  fun getTopics(@Body data:String): Call<List<Topic>?>?
 
   @POST("/api/values/getQus")
   fun postGetTest(@Body data: String): Call<List<Task>?>?
+
+   @POST("/api/values/postResult")
+   fun postResult(@Body data: String) : Call<Int>?
 
 }

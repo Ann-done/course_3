@@ -21,16 +21,16 @@ class Result {
     @Expose
     public var mark = 0
 
-    @SerializedName("DateTime")
-    @Expose
-    public var dateTime: Date? = null
-
     @SerializedName("StudentId")
     @Expose
     public var studentId: String? = null
 
-    @SerializedName("TopicId")
+    @SerializedName("TopicName")
     @Expose
-    public var topicId = 0
+    public var topicName = null
+
+    @SerializedName("SubjectName")
+    @Expose
+    public var subjectName = null
 
 }

@@ -1,6 +1,7 @@
 package com.example.login_app.ui.menu
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -12,6 +13,8 @@ import com.example.login_app.api.service.Result
 import com.example.login_app.api.service.Task
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.login_app.ui.login.LoginActivity
+import com.example.login_app.ui.login.SendResViewModelFactory
 import com.example.login_app.ui.login.TaskViewModelFactory
 import com.example.login_app.ui.login.TestViewModelFactory
 import kotlinx.coroutines.delay
@@ -34,14 +37,23 @@ class TestActivity : AppCompatActivity() {
     var qCounter: Int = 1
     var countOfRightAnswers: Int = 0
 
-    var topicId:Int?=null
+    var topicId:Int =0
+    var topicName: String? = null
+    var studentId: String? = null
+    var groupId: Int = 0
+    var subjectId: Int = 0
     var loadTest: ProgressBar? = null
 
     private lateinit var taskViewModel: TaskViewModel
+    private lateinit var postResViewModel: SendResViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         topicId = intent.getIntExtra(("topicId"), 0)
+        topicName = intent.getStringExtra("topicName")
+        studentId = intent.getStringExtra("studentId")
+        groupId = intent.getIntExtra("groupId",0)
+        subjectId = intent.getIntExtra("subjectId",0)
 
         setContentView(R.layout.run_test_activity2)
 
@@ -68,7 +80,10 @@ class TestActivity : AppCompatActivity() {
 
         taskViewModel = ViewModelProvider(this, TaskViewModelFactory())
                 .get(TaskViewModel::class.java)
-        //Todo: тут запросы
+        postResViewModel = ViewModelProvider(this, SendResViewModelFactory())
+                .get(SendResViewModel::class.java)
+
+        // тут запросы
         taskViewModel.getTasks(topicId!!)
         taskViewModel.tasksResult.observe(this@TestActivity, Observer {
             val tasksResult = it ?: return@Observer
@@ -76,8 +91,9 @@ class TestActivity : AppCompatActivity() {
             loadTest?.visibility = View.GONE
             if (tasksResult.error != null) {
                 //TODO кнопка для возврата на прошлую активити обратотка null
-                Toast.makeText(applicationContext, "tasksResult.error", Toast.LENGTH_LONG).show()
-                endtest()
+                Toast.makeText(applicationContext, tasksResult.error, Toast.LENGTH_LONG).show()
+                //завершить работу активити
+                //endtest()
             }
             if (tasksResult.success != null) {
                 listOfTasks = tasksResult.success.listTasks
@@ -95,6 +111,26 @@ class TestActivity : AppCompatActivity() {
                                 "Ok"
                         ) { _, _ -> setView() }.create()
                 dialog.show()
+            }
+        })
+
+        postResViewModel.postResResult.observe(this@TestActivity, Observer {
+            val resIdResult = it ?: return@Observer
+
+            loadTest?.visibility = View.GONE
+            if (resIdResult.error != null) {
+                //TODO вывести что тест не сохранен
+                Toast.makeText(applicationContext, resIdResult.error, Toast.LENGTH_LONG).show()
+                //завершить работу активити
+                //endtest()
+            }
+            if (resIdResult.success != null) {
+                numOfQuestion!!.text = "Ваш результат успешно сохранен!\n" +
+                        topicName + "\n\n" + "Правильных ответов: " + countOfRightAnswers + " из " + countOfQ + "\n" +
+                        " Оценка : " +   countOfRightAnswers * 10 / countOfQ
+
+                buttonNext?.visibility = View.VISIBLE
+                buttonNext?.text = "Ок"
             }
         })
 
@@ -120,11 +156,26 @@ class TestActivity : AppCompatActivity() {
     }
 
     private fun endtest() {
+
+        loadTest?.visibility = View.VISIBLE
+        viewTest?.visibility = View.INVISIBLE
+        buttonNext?.visibility = View.INVISIBLE
+        numOfQuestion!!.text = ""
+
         var result = Result()
+        result.studentId = studentId
         result.quNum = countOfQ
         result.rightAnswNum = countOfRightAnswers
-        result.mark = countOfRightAnswers * 10 / countOfQ
-        result.topicId = topicId!!
+        result.mark =  countOfRightAnswers * 10 / countOfQ
+        postResViewModel.sendResult(result , groupId, subjectId , topicId!!)
+        //запрос
+//        val intent = Intent();
+//        intent.putExtra("quNum", countOfQ)
+//        intent.putExtra("rightAnswNum", countOfRightAnswers)
+//        intent.putExtra("mark", countOfRightAnswers * 10 / countOfQ)
+//        setResult(RESULT_OK, intent);
+//        finish();
+
     }
 
     fun goNextQ(view: View?) {
@@ -171,6 +222,9 @@ class TestActivity : AppCompatActivity() {
             }
             "Завершить тест" -> {
                 endtest()
+            }
+            "Ок" -> {
+                //завернить работу активити
             }
             else -> {
             }
