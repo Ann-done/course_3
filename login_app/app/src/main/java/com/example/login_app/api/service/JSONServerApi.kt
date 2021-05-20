@@ -26,4 +26,6 @@ interface JSONServerApi {
    @POST("/api/values/postResult")
    fun postResult(@Body data: String) : Call<Int>?
 
+   @POST("/api/values/getNewRes")
+   fun postGetNewRes(@Body data: String) : Call<List<Result>>?
 }

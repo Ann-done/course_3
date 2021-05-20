@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.login_app.data.LoginDataSource
 import com.example.login_app.data.LoginRepository
-import com.example.login_app.ui.menu.SendResViewModel
-import com.example.login_app.ui.menu.TaskViewModel
-import com.example.login_app.ui.menu.TestViewModel
-import com.example.login_app.ui.menu.TopicViewModel
+import com.example.login_app.ui.menu.*
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.
@@ -64,6 +61,26 @@ class SendResViewModelFactory : ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SendResViewModel::class.java)) {
             return SendResViewModel( ) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
+class LocResViewModelFactory : ViewModelProvider.Factory{
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(LocResViewModel::class.java)) {
+            return LocResViewModel( ) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
+class RemResViewModelFactory : ViewModelProvider.Factory{
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(RemResViewModel::class.java)) {
+            return RemResViewModel( ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

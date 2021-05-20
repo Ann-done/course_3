@@ -1,24 +1,18 @@
 package com.example.login_app.ui.menu
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.example.login_app.BuildConfig
 import com.example.login_app.R
 import com.example.login_app.api.service.Result
 import com.example.login_app.api.service.Task
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.login_app.ui.login.LoginActivity
 import com.example.login_app.ui.login.SendResViewModelFactory
 import com.example.login_app.ui.login.TaskViewModelFactory
-import com.example.login_app.ui.login.TestViewModelFactory
-import kotlinx.coroutines.delay
-import java.time.LocalDateTime
 import java.util.*
 
 class TestActivity : AppCompatActivity() {
@@ -165,7 +159,7 @@ class TestActivity : AppCompatActivity() {
         var result = Result()
         result.studentId = studentId
         result.quNum = countOfQ
-        result.rightAnswNum = countOfRightAnswers
+        result.rightAnsNum = countOfRightAnswers
         result.mark =  countOfRightAnswers * 10 / countOfQ
         postResViewModel.sendResult(result , groupId, subjectId , topicId!!)
         //запрос

@@ -28,3 +28,13 @@ data class SendResResult(
         val success: ReturnedSendResult? = null,
         val error: String? = null
 )
+
+// получение результатов
+data class LocalResResult(
+        val success: ReturnedLocalRes? = null,
+        val error: String? = null
+)
+data class RemoteResResult(
+        val success: ReturnedRemoteRes? = null,
+        val error: String? = null
+)

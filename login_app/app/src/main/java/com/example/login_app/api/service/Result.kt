@@ -15,7 +15,7 @@ class Result {
 
     @SerializedName("RightAnswNum")
     @Expose
-    public var rightAnswNum = 0
+    public var rightAnsNum = 0
 
     @SerializedName("Mark")
     @Expose
@@ -27,10 +27,10 @@ class Result {
 
     @SerializedName("TopicName")
     @Expose
-    public var topicName = null
+    public var topicName: String? = null
 
     @SerializedName("SubjectName")
     @Expose
-    public var subjectName = null
+    public var subjectName: String? = null
 
 }

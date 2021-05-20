@@ -2,6 +2,7 @@ package com.example.login_app.ui.login
 
 import com.example.login_app.api.service.Task
 import com.example.login_app.api.service.Topic
+import com.example.login_app.api.service.Result
 
 /**
  * User details post authentication that is exposed to the UI
@@ -31,4 +32,11 @@ data class ReturnedTasks(
 
 data class ReturnedSendResult(
         val postResId: Int
+)
+
+data class ReturnedLocalRes(
+        val listRes: ArrayList<Result>
+)
+data class ReturnedRemoteRes(
+        val ok : String
 )

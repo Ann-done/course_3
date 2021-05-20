@@ -21,7 +21,7 @@ class ViewAdapter(context: Context, objects: ArrayList<Result>?) :
             (convertView!!.findViewById<View>(R.id.TopicName) as TextView).text = resObject.topicName.toString()
             (convertView.findViewById<View>(R.id.SubjectShortName) as TextView).text = resObject.id.toString()
             (convertView.findViewById<View>(R.id.Mark) as TextView).text = resObject.mark.toString()
-            (convertView.findViewById<View>(R.id.RightAnswersNum) as TextView).text = resObject.rightAnswNum.toString()
+            (convertView.findViewById<View>(R.id.RightAnswersNum) as TextView).text = resObject.rightAnsNum.toString()
         }
 
         return convertView
